@@ -8,6 +8,7 @@
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
+    "noImplicitAny": false,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -22,7 +23,13 @@
     "lib": [
       "ES2022",
       "dom"
-    ]
+    ],
+    "baseUrl": "./src",
+    "paths": {
+      "shared/*": [
+        "app/shared/*"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
