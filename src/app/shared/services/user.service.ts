@@ -20,7 +20,8 @@ export class UserService {
     return this.httpClient.post(this.baseUrl, {
       id: user.id,
       name: user.name,
-      email: user.email
+      email: user.email,
+      isAdmin: false
     }) as Observable<AppUser>;
     
     // this.database.object('/users/' + user.uid).update({

@@ -5,6 +5,9 @@ import { ShoppingCartService } from 'shared/services/shopping-cart.service';
 import { Observable } from 'rxjs';
 import { ShoppingCart } from 'shared/models/shopping-cart';
 import { SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
+import { UserService } from 'shared/services/user.service';
+import { app } from '../../../../../server';
+import { error } from 'console';
 
 @Component({
   selector: 'navbar',
@@ -12,7 +15,7 @@ import { SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent implements OnInit {
-  appUser!: AppUser;
+  appUser: AppUser | null = null;
   cart$!: Observable<ShoppingCart>;
 
   user!: SocialUser;
@@ -20,6 +23,7 @@ export class NavbarComponent implements OnInit {
 
   constructor(
     private authService: AuthService, 
+    private userService: UserService,
     private shoppingCartService: ShoppingCartService,
     private socialAuthService: SocialAuthService){
   }
@@ -32,9 +36,16 @@ export class NavbarComponent implements OnInit {
       console.log(user);
     });
 
-    this.authService.appUser$.subscribe(appUser => this.appUser = appUser);
+    this.authService.appUser$.subscribe(appUser => {
+      if(appUser)
+        this.appUser = appUser;
+      }, 
+        error => {
+          console.error('Error fetching user info: ', error);
+        }
+      );
+
     this.cart$ = await this.shoppingCartService.getCart();
-    
   }
 
   login() {

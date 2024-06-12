@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Observable, filter, map, of, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, filter, map, of, switchMap } from 'rxjs';
 import * as firebase  from '@firebase/auth';
 import { ActivatedRoute } from '@angular/router';
 import { AppUser } from 'shared/models/app-user';
@@ -15,6 +15,7 @@ import { GoogleLoginProvider, SocialAuthService, SocialUser } from '@abacritt/an
 export class AuthService {
 
   user$!: Observable<SocialUser>;
+  // user$!: Observable<SocialUser>;
 
   constructor(
     private userService: UserService, 
@@ -41,20 +42,18 @@ export class AuthService {
     // this.angularFireAuth.signOut();
     this.socialAuthService.signOut();
   }
-  
+
   get appUser$(): Observable<AppUser>{
     return this.user$
       .pipe(
-        map(user => {
-          if (user) return this.userService.get(user.id).subscribe(user => {
-            console.log("Signed-in user info: ", user);
-          }, error => {
-            console.log("User not accessed: ", error);
-          });
-
-          return of(null);
+        switchMap(user => {
+          if (user) 
+            return this.userService.get(user.id);
+          else {
+            return of(null);
+          }
         })
-      ) as unknown as Observable<AppUser>
+      ) as unknown as Observable<AppUser>;
   }
 
 
